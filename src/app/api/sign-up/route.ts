@@ -11,10 +11,15 @@ export async function POST(request: Request) {
         // we get data like:(username, email, password) from frontend in json format. and we get the json from request props. 
         // (always remember if anything we do in database we need to use "await")
         const { username, email, password } = await request.json();
+        // create verify code---
+        const verifyCode = Math.floor(100000 + Math.random() * 900000).toString()
+
+        // console.log(verifyCode);
 
         // now user is already registered or not . 
         // before that we need to find the user from MongoDB or Database. => (findOne)
-        // check the username already used or not
+        // check for the username already used or not
+        
         const ExistingUserVerifiedByUsername = await User.findOne({ username, isVerified: true });
 
         if (ExistingUserVerifiedByUsername) {
@@ -25,12 +30,8 @@ export async function POST(request: Request) {
             }, { status: 400 })
         }
 
-        // Check the email is used or not
+        // Check for the email is used or not
         const ExistingUserVerifiedByEmail = await User.findOne({ email });
-
-        // check verify code---
-        const verifyCode = Math.floor(100000 + Math.random() * 900000).toString()
-        // console.log(verifyCode);
 
         if (!ExistingUserVerifiedByEmail) {
             // if email didn't match then 
